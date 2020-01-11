@@ -37,6 +37,7 @@
  (export "__collect" (func $~lib/rt/pure/__collect))
  (export "__rtti_base" (global $~lib/rt/__rtti_base))
  (export "Compared" (func $assembly/libs/Compared))
+ (export "add" (func $assembly/libs/add))
  (export "invert" (func $assembly/libs/invert))
  (func $~lib/rt/tlsf/removeBlock (; 1 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
@@ -4465,7 +4466,12 @@
   end
   i32.const 0
  )
- (func $assembly/libs/invert (; 30 ;) (type $FUNCSIG$iiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (result i32)
+ (func $assembly/libs/add (; 30 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  i32.const 100
+  i32.mul
+ )
+ (func $assembly/libs/invert (; 31 ;) (type $FUNCSIG$iiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (result i32)
   (local $4 i32)
   (local $5 i32)
   block $break|0
@@ -4550,7 +4556,7 @@
   end
   i32.const 0
  )
- (func $~lib/rt/pure/__visit (; 31 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/pure/__visit (; 32 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   local.get $0
@@ -4680,7 +4686,7 @@
    end
   end
  )
- (func $~lib/rt/__visit_members (; 32 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/__visit_members (; 33 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   block $switch$1$default
    block $switch$1$case$4
@@ -4705,6 +4711,6 @@
   end
   unreachable
  )
- (func $null (; 33 ;) (type $FUNCSIG$v)
+ (func $null (; 34 ;) (type $FUNCSIG$v)
  )
 )

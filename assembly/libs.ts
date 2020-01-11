@@ -13,6 +13,10 @@ export function Compared(r1:i32,g1:i32,b1:i32,r2:i32,g2:i32,b2:i32):i32{
 }
 
 
+export function add (i:i32):i32{
+  return i*100;
+}
+
 export function invert(byteSize: i32, r2:i32,g2:i32,b2:i32): i32 {
   for (let i = 0; i < byteSize; i += 4) {
     let pos = i + byteSize;
