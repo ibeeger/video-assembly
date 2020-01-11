@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>video改变</title>
+	<style>
+		*{margin: 0; padding: 0}
+		section{
+			width: 100%;
+			height: 400px;
+		}
+		canvas{border: 1px solid #ccc;}
+		video{
+			opacity: 0.1;
+		}
+	</style>
+</head>
+<body>
+	<section>
+		<canvas width="500" height="400"></canvas>
+		<video src="./v.mp4" muted autoplay width="100" height="100"></video>
+	</section>
+	<script>
+		(function(){
+			const canvas = document.querySelector('canvas');
+			const ctx = canvas.getContext('2d');
+			var timer = null;
+			async function getInstance() {
+				let byteSize = canvas.width*canvas.height*4;
+				let initial = 2 * (((byteSize + 0xffff) & ~0xffff) >>> 16);
+				console.log(initial, canvas.width, canvas.height)	
+				let memory = new WebAssembly.Memory({ initial});
+				let importObject = { env: { memory, abort: () => console.log("Abort!") }};
+				const webasly = await WebAssembly.instantiateStreaming(
+		            // fetch("./build/optimized.wasm"),
+		            fetch("./build/untouched.wasm"),
+		            importObject
+		          )
+				const mem = new Uint8Array(memory.buffer);
+				return {...webasly,mem}
+			}
+
+			async function play() {
+				let video = document.querySelector('video');
+				video.addEventListener('playing', async function(){
+					canvas.width = video.width;
+					canvas.height = video.height;
+					let {instance, mem}  = await getInstance();
+					updateCanvas(instance.exports.invert, mem);
+				}, false)
+			}
+
+
+			function updateCanvas(fun, mem) {
+				// R: 75 G: 250 B: 3
+				const cs = document.createElement('canvas');
+				const cx = cs.getContext('2d');
+				const video = document.querySelector('video');
+				cs.width = video.width;
+				cs.height = video.height;
+				// document.body.appendChild(cs);
+				function update(){
+					cx.drawImage(video, 0,0, cs.width,cs.height);
+					console.log('==')
+					let imageData = cx.getImageData(0,0,cs.width,cs.height);
+					let data = imageData.data;
+					let byteSize = data.length;
+					mem.set(data);
+					fun(byteSize, 75, 250, 3);
+					data.set(mem.subarray(byteSize, 2*byteSize));
+					ctx.putImageData(imageData,0,0);
+					timer = requestAnimationFrame(update);
+				}
+				update();
+			}
+
+			play();
+		})()
+
+
+	</script>
+</body>
+</html>
