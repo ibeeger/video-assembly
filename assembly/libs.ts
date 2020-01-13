@@ -25,8 +25,6 @@ export function invertSelf (byteSize: i32, r2:i32,g2:i32,b2:i32):i32 {
       store<u8>(pos + 1, load<u8>(i + 1));
       store<u8>(pos + 2, load<u8>(i + 2));
     }
-    // store<u8>(pos + 3, 255);
-
   }
   return 0;
 }
