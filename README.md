@@ -2,7 +2,7 @@
 
 先看下效果
 
-![](img/rst.gif)
+![](//bloglibs.oss-cn-beijing.aliyuncs.com/images/rst.gif)
 
 ##### 整体思路
 
