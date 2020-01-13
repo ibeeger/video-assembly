@@ -2,7 +2,7 @@
 
 先看下效果
 
-![示例gif图](img/rst.gif)
+![示例gif](img/rst.gif)
 
 ##### 整体思路
 
