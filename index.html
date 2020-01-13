@@ -9,16 +9,18 @@
 			width: 100%;
 			height: 400px;
 		}
-		canvas{border: 1px solid #ccc;}
+		canvas{border: 1px solid #ccc; background-color: #f0f0f0}
 		video{
 			opacity: 0.1;
+			visibility: hidden;
 		}
 	</style>
 </head>
 <body>
 	<section>
-		<canvas width="500" height="400"></canvas>
-		<video src="./v.mp4" muted autoplay width="100" height="100"></video>
+		<canvas width="100" height="100"></canvas>
+		<video src="./v.mp4" muted autoplay width="100" id="fe" height="70"></video>
+		<video src="./bg.mp4" muted autoplay width="100" id="bg" height="70"></video>
 	</section>
 	<script>
 		(function(){
@@ -28,11 +30,10 @@
 			async function getInstance() {
 				let byteSize = canvas.width*canvas.height*4;
 				let initial = 2 * (((byteSize + 0xffff) & ~0xffff) >>> 16);
-				console.log(initial, canvas.width, canvas.height)	
-				let memory = new WebAssembly.Memory({ initial});
+				let memory = new WebAssembly.Memory({ initial });
+				console.log(initial, byteSize)	
 				let importObject = { env: { memory, abort: () => console.log("Abort!") }};
 				const webasly = await WebAssembly.instantiateStreaming(
-		            // fetch("./build/optimized.wasm"),
 		            fetch("./build/untouched.wasm?a"+Date.now()),
 		            importObject
 		          )
@@ -40,44 +41,43 @@
 				return {...webasly,mem}
 			}
 
-			async function play() {
+			async function init() {
 				let video = document.querySelector('video');
 				video.addEventListener('playing', async function(){
 					canvas.width = video.width;
 					canvas.height = video.height;
 					let {instance, mem}  = await getInstance();
-					console.log(instance.exports)
-					// updateCanvas(instance.exports.add, mem);
-					updateCanvas(instance.exports.invert, mem);
+					// updateCanvas(instance.exports.invert, mem);
+					updateCanvas(instance.exports.invertSelf, mem);
 				}, false)
 			}
 
-
 			function updateCanvas(fun, mem) {
 				// R: 75 G: 250 B: 3
-				console.log(fun)
 				const cs = document.createElement('canvas');
 				const cx = cs.getContext('2d');
-				const video = document.querySelector('video');
+				const video = document.querySelector('#fe');
+				const bgvideo = document.querySelector('#bg');
 				cs.width = video.width;
-				cs.height = video.height;
-				// document.body.appendChild(cs);
+				cs.height = video.height*2;
 				function update(){
-					cx.drawImage(video, 0,0, cs.width,cs.height);
-					console.log('==')
+					cx.drawImage(video, 0,0, cs.width,cs.height/2);
+					cx.drawImage(bgvideo, 0,cs.height/2, cs.width,cs.height);
 					let imageData = cx.getImageData(0,0,cs.width,cs.height);
 					let data = imageData.data;
 					let byteSize = data.length;
+					console.log(data.length);
 					mem.set(data);
 					fun(byteSize, 75, 250, 3);
-					data.set(mem.subarray(byteSize, 2*byteSize));
+					data.set(mem.subarray(0, byteSize));
+					// data.set(mem.subarray(byteSize, 2*byteSize));
+					ctx.fillRect(0,0,100,100);
 					ctx.putImageData(imageData,0,0);
 					timer = requestAnimationFrame(update);
 				}
 				update();
 			}
-
-			play();
+			init();
 		})()
 
 

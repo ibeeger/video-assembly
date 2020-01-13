@@ -4,15 +4,17 @@
   "description": "视频换背景",
   "main": "index.js",
   "scripts": {
-    "asdev": "asc assembly/libs.ts -b build/untouched.wasm -t build/untouched.wat --sourceMap --validate --debug",
-    "asbuild:untouched": "asc assembly/libs.ts -b build/untouched.wasm -t build/untouched.wat --sourceMap --validate --debug",
+    "asdev": "asc assembly/libs.ts -b build/untouched.wasm -t build/untouched.wat --sourceMap --validate --debug  --runtime none --importMemory",
+    "asbuild:untouched": "asc assembly/libs.ts -b build/untouched.wasm -t build/untouched.wat --sourceMap --validate --debug  --runtime none --importMemory",
     "asbuild:optimized": "asc assembly/libs.ts -b build/optimized.wasm -t build/optimized.wat --sourceMap --validate --optimize  --runtime none --importMemory",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"
- 
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "assemblyscript": "^0.8.1"
+  },
+  "dependencies": {
+    "wasm-check": "^1.4.3"
   }
 }
